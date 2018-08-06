@@ -6,6 +6,12 @@
       - "127.0.0.1"
     clickhouse_path_data: /data/clickhouse/
     clickhouse_users:
+      - { name: "default",
+          password: "",
+          networks: "{{ clickhouse_networks_default }}",
+          profile: "default",
+          quota: "default",
+          comment: "Default user for login if user not defined" }
       - { name: "testuser",
           password_sha256_hex: "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
           networks: "{{ clickhouse_networks_default }}",

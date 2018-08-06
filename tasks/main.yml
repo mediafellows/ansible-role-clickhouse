@@ -64,7 +64,6 @@
 
 - name: Gather list of existing databases
   command: "clickhouse-client -h localhost -q 'show databases'"
-  changed_when: False
   register: existing_databases
 
 - name: Delete databases based on clickhouse_dbs directive

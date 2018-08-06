@@ -8,4 +8,8 @@ describe "Clickhouse Setup" do
   describe file('/etc/clickhouse-server/config.xml') do
     its(:content) { should include("<path>#{ANSIBLE_VARS.fetch('clickhouse_path_data', 'FAIL')}</path>") }
   end
+
+  describe file('/etc/clickhouse-server/users.xml') do
+    its(:content) { should include("<users>") }
+  end
 end
