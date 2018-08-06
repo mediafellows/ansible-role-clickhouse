@@ -12,7 +12,7 @@
 
 - name: Install clihouse apt repo
   apt_repository:
-    repo: 'deb http://repo.yandex.ru/clickhouse/deb/stable/ main'
+    repo: 'deb http://repo.yandex.ru/clickhouse/deb/stable/ main/'
     state: present
 
 - name: Install Clickhouse apt packages
