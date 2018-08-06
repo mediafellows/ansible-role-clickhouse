@@ -57,7 +57,7 @@
 - name: Make sure clickhouse-server is (re)started and enabled on boot
   service:
     name: clickhouse-server
-    service: restarted
+    state: restarted
     enabled: true
 
   # Add DBs and dictionaries (optional preparation steps):
