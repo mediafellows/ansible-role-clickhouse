@@ -122,7 +122,7 @@ clickhouse_dicts:
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 ```yaml
   - hosts: localhost
-    remote_user: root
+    become: true
     vars:
       clickhouse_users:
           - { name: "testuser",

@@ -62,4 +62,4 @@
           attributes:
             - { name: testAttrName, type: String, null_value: "" }
   roles:
-    - ansible-clickhouse
+    - ansible-role-clickhouse

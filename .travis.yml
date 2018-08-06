@@ -14,7 +14,7 @@ env:
 install:
   # Setup ruby to run serverspec tests
   - ruby -v
-  #- gem install serverspec
+  - gem install serverspec
 
   # Install Ansible
   - pip install ansible
@@ -39,4 +39,4 @@ script:
     || (echo 'Idempotence test: fail' && exit 1)
 
   # Run serverspec
-  #  - rake spec
+  - rake spec
