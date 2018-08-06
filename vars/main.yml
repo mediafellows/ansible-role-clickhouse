@@ -1,4 +1,8 @@
 ---
 # vars file for mediapeers.clickhouse role
 
-# Noting here please see defaults/main.yml
+clickhouse_path_configdir: /etc/clickhouse-server
+
+clickhouse_networks_default:
+  - "::1"
+  - "127.0.0.1"
