@@ -1,11 +1,10 @@
-ansible-clickhouse [![Build Status](https://travis-ci.org/AlexeySetevoi/ansible-clickhouse.svg?branch=master)](https://travis-ci.org/AlexeySetevoi/ansible-clickhouse)
-=========
+# Ansible Clickhouse role
 
 Simple clickhouse-server deploy and management role.
-Any issues and pr are welcome.
 
-Role Variables
---------------
+This is a fork of https://github.com/AlexeySetevoi/ansible-clickhouse
+
+## Role Variables
 
 F: You can manage listen ports
 ```yaml
@@ -138,8 +137,7 @@ F: Flag for remove clickhouse from host(disabled by default)
 clickhouse_remove: no
 ```
 
-Example Playbook
-----------------
+## Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 ```yaml
@@ -215,13 +213,11 @@ config_db | Only add&remove databases
 config_sys / Only regenerate dicts
 config | config_sys+config_db
 
-License
--------
+## License
 
 BSD
 
-Author Information
-------------------
+## Author Information
 
 [ClickHouse](https://clickhouse.yandex/docs/en/index.html) by [Yandex LLC](https://yandex.ru/company/).
 
