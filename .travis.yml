@@ -1,97 +1,42 @@
 ---
+sudo: required
+dist: xenial
+addons:
+  apt:
+    update: true
+
 language: python
 python: "2.7"
 
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      sudo: true
-      env: ANSIBLE_VERSION='ansible>=2.4,<2.5'
-    - os: linux
-      dist: trusty
-      sudo: true
-      env: ANSIBLE_VERSION='ansible>=2.3,<2.4'
-    - os: linux
-      dist: trusty
-      sudo: true
-      env: ANSIBLE_VERSION='latest'
-    - os: linux
-      dist: xenial
-      sudo: true
-      env: ANSIBLE_VERSION='ansible>=2.4,<2.5'
-    - os: linux
-      dist: xenial
-      sudo: true
-      env: ANSIBLE_VERSION='ansible>=2.3,<2.4'
-    - os: linux
-      dist: xenial
-      sudo: true
-      env: ANSIBLE_VERSION='latest'
-    - os: linux
-      dist: precise
-      sudo: true
-      env: ANSIBLE_VERSION='ansible>=2.4,<2.5'
-    - os: linux
-      dist: precise
-      sudo: true
-      env: ANSIBLE_VERSION='ansible>=2.3,<2.4'
-    - os: linux
-      dist: precise
-      sudo: true
-      env: ANSIBLE_VERSION='latest'
-
-# Use the new container infrastructure
-sudo: true
-
-# Install ansible
-addons:
-  apt:
-    packages:
-    - python-pip
+env:
+  - INVENTORY=tests/inventory; TEST_PLAY=tests/test.yml
 
 install:
-  # Install ansible
-  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible; else pip install $ANSIBLE_VERSION; fi
+  # Setup ruby to run serverspec tests
+  - ruby -v
+  #- gem install serverspec
 
-  # Check ansible version
+  # Install Ansible
+  - pip install ansible
   - ansible --version
 
-  # Create ansible.cfg with correct roles_path
-  - printf '[defaults]\nroles_path=../' >ansible.cfg
+  # Add ansible.cfg to pick up roles path.
+  - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
 
 script:
-  # Basic role syntax check
-  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
-  # Full install check
-  - ansible-playbook tests/test.yml -i tests/inventory -v
-  - sudo cat /var/log/clickhouse-server/clickhouse-server.err.log
-  # Clickhouse client checking
-  - clickhouse-client -q 'select 1'
-  - clickhouse-client -q 'select 1' -d default
-  - clickhouse-client -q 'select 1' -d testu1
-  - clickhouse-client -q 'select 1' -d testu2 -u testuser2 --password testplpassword
-  - clickhouse-client -q 'select 1' -d testu3
-  # Remove check
-  - ansible-playbook tests/test.yml -i tests/inventory -e "clickhouse_remove=yes clickhouse_remove_full=yes" -v
-  # Partial install check
-  - ansible-playbook tests/test.yml -i tests/inventory -t install -v
-  - ansible-playbook tests/test.yml -i tests/inventory -t config_sys -v
-  - ansible-playbook tests/test.yml -i tests/inventory -t config_db -v
-  - ansible-playbook tests/test.yml -i tests/inventory -t config -v
-  - sudo cat /var/log/clickhouse-server/clickhouse-server.err.log
-  # Http port checking
-  - curl 'http://localhost:8123'
-  - echo 'SELECT 1' | curl 'http://testuser2:testplpassword@localhost:8123?database=testu2' -d @-
-  # Clickhouse client checking
-  - clickhouse-client -q 'select 1'
-  - clickhouse-client -q 'select 1' -d default
-  - clickhouse-client -q 'select 1' -d testu1
-  - clickhouse-client -q 'select 1' -d testu2 -u testuser2 --password testplpassword
-  - clickhouse-client -q 'select 1' -d testu3
-  #Full remove check
-  - ansible-playbook tests/test.yml -i tests/inventory -e "clickhouse_remove=yes clickhouse_remove_full=yes" -v
+  # Check the role/playbook's syntax.
+  - ansible-playbook -i $INVENTORY --syntax-check $TEST_PLAY
 
+  # Run the role/playbook with ansible-playbook.
+  - ansible-playbook -i $INVENTORY --connection=local $TEST_PLAY
 
-notifications:
-  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  # Allowing 1 'change' for reading state.
+  - >
+    ansible-playbook -i $INVENTORY --connection=local $TEST_PLAY
+    | grep -q 'changed=1.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  # Run serverspec
+  #  - rake spec

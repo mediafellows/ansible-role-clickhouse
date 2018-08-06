@@ -1,2 +1,4 @@
 ---
-# vars file for clickhouse
+# vars file for mediapeers.clickhouse role
+
+# Noting here please see defaults/main.yml

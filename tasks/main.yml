@@ -1,36 +1,76 @@
 ---
-# tasks file for clickhouse
-- include_vars: "{{ item }}"
-  with_first_found:
-    - "../vars/{{ ansible_distribution }}_{{ ansible_distribution_release }}.yml"
-    - "../vars/empty.yml"
-  tags: [always]
+# tasks file for mediapeers.clickhouse role
 
-- include: precheck.yml
-  tags: [precheck,install]
+# Ubuntu/Debian Installation steps:
+# https://clickhouse.yandex/docs/en/getting_started/index.html#installation
 
-- name: Debug installed
-  debug: var=clickhouse_rt_isinstalled.rc
+- name: Add clickhouse apt repo key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: E0C56BD4
 
-- include: install_apt.yml
-  when: ansible_pkg_mgr == 'apt' and clickhouse_setup == 'package' and clickhouse_rt_isinstalled.rc !=0 and clickhouse_remove|bool == False
-  tags: [install]
+- name: Install clihouse apt repo
+  apt_repository:
+    repo: 'deb http://repo.yandex.ru/clickhouse/deb/stable/ main'
+    state: present
 
-- include: remove_apt.yml
-  when: ansible_pkg_mgr == 'apt' and clickhouse_setup == 'package' and clickhouse_rt_isinstalled.rc == 0 and clickhouse_remove|bool == True
-  tags: [remove]
+- name: Install Clickhouse apt packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - clickhouse-client
+    - clickhouse-server
 
-- include: precheck.yml
-  tags: [precheck,config,config_sys,config_db,config_dict]
+# Configuration steps:
+# https://clickhouse.yandex/docs/en/operations/server_settings/settings/
 
-- include: config_sys.yml
-  when: clickhouse_rt_isinstalled.rc == 0 and clickhouse_remove|bool == False
-  tags: [config,config_sys]
+- name: Ensure clickhouse config,data and log dirs exist
+  file:
+    dest: "{{ item }}"
+    owner: clickhouse
+    group: clickhouse
+    state: directory
+  with_items:
+    - "{{ clickhouse_path_logdir }}"
+    - "{{ clickhouse_path_configdir }}"
+    - "{{ clickhouse_path_tmp }}"
+    - "{{ clickhouse_path_data }}"
+  notify: restart clickhouse
 
-- include: config_db.yml
-  when: clickhouse_rt_isinstalled.rc == 0 and clickhouse_remove|bool == False
-  tags: [config,config_db]
+- name: Add clickhouse config
+  template:
+   src: config.j2
+   dest: "{{ clickhouse_path_configdir }}/config.xml"
+   owner: clickhouse
+   group: clickhouse
+  notify: restart clickhouse
 
-- include: config_dict.yml
-  when: clickhouse_rt_isinstalled.rc == 0 and clickhouse_remove|bool == False
-  tags: [config,config_dict]
+- name: Add clickhouse users config
+  template:
+   src: users.j2
+   dest: "{{ clickhouse_path_configdir }}/users.xml"
+   owner: clickhouse
+   group: clickhouse
+  notify: restart clickhouse
+
+- name: Gather list of existing databases
+  command: "clickhouse-client -h localhost -q 'show databases'"
+  changed_when: False
+  register: existing_databases
+
+- name: Config | Delete database config
+  command: "clickhouse-client -h localhost -q 'DROP DATABASE IF EXISTS `{{ item.name }}`'"
+  with_items: "{{ clickhouse_dbs }}"
+  when: item.state is defined and item.state == 'absent' and item.name in existing_databases.stdout_lines
+
+- name: Config | Create database config
+  command: "clickhouse-client -h localhost -q 'CREATE DATABASE IF NOT EXISTS `{{ item.name }}`'"
+  with_items: "{{ clickhouse_dbs }}"
+  when: (item.state is undefined or item.state == 'present') and item.name not in existing_databases.stdout_lines
+
+- name: Config | Generate dictionary config
+  template:
+   src: dicts.j2
+   dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
+

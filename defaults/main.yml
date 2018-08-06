@@ -1,16 +1,14 @@
 ---
-# defaults file for clickhouse
+# defaults file for mediapeers.clickhouse role
 
-#Flag for using with requirements check
-clickhouse_supported: no
-#Type of installation (package,source)
-clickhouse_setup: package
-#Flag for remove clickhouse from host(disabled by default)
-clickhouse_remove: no
-#Flag for full remove(incl db and config), use clickhouse_remove + clickhouse_remove_full
-clickhouse_remove_full: no
+# Path settings:
+clickhouse_path_configdir:  "/etc/clickhouse-server"
+clickhouse_path_logdir:     "/var/log/clickhouse-server"
+clickhouse_path_data:       "/var/lib/clickhouse/"
+clickhouse_path_tmp:        "/var/lib/clickhouse/tmp/"
 
-clickhouse_profiles_default:
+# Profiles
+clickhouse_profiles:
  default:
    max_memory_usage: 10000000000
    use_uncompressed_cache: 0
@@ -18,48 +16,36 @@ clickhouse_profiles_default:
  readonly:
    readonly: 1
 
-clickhouse_profiles_custom: {}
-
-clickhouse_listen_host_default:
+# Listen hosts:
+clickhouse_listen_hosts:
   - "::1"
   - "127.0.0.1"
-
-clickhouse_listen_host_custom: []
-
-clickhouse_listen_host: "{{ clickhouse_listen_host_default + clickhouse_listen_host_custom }}"
-
-clickhouse_http_port: 8123
-
-clickhouse_tcp_port: 9000
-
-clickhouse_interserver_http: 9009
 
 clickhouse_networks_default:
   - "::1"
   - "127.0.0.1"
 
-clickhouse_users_default:
+# Ports
+clickhouse_http_port: 8123
+clickhouse_tcp_port: 9000
+clickhouse_interserver_http_port: 9009
+
+# Users and quotas:
+clickhouse_users:
   - { name: "default", password: "", networks: "{{ clickhouse_networks_default }}", profile: "default", quota: "default", comment: "Default user for login if user not defined" }
   - { name: "readonly", password: "", networks: "{{ clickhouse_networks_default }}", profile: "default", quota: "default", comment: "Example of user with readonly access" }
 
-#Full form { name:'<username>', password: '<plainpassword>', password_sha256_hex: '<sha256password>',
-#   networks:"<{} with nets>", profile:'<profile>', quota:'<quota>', dbs: '{} with dbs', comment: '<some comment>'}
-#Req: name, password or password_256_hex
-clickhouse_users_custom: {}
-
-clickhouse_quotas_intervals_default:
+clickhouse_quotas_intervals:
  - { duration: 3600, queries: 0, errors: 0,result_rows: 0,read_rows: 0,execution_time: 0 }
 
-clickhouse_quotas_default:
+clickhouse_quotas:
  - { name: "default", intervals: "{{ clickhouse_quotas_intervals_default }}",comment: "Default quota - count only" }
 
-clickhouse_quotas_custom: {}
+# To add dbs and dicts during setup set those variables to lists:
+# clickhouse_dbs: []
+# clickhouse_dicts: []
 
-clickhouse_dbs_default: []
-clickhouse_dbs_custom: []
-
-clickhouse_dbs: "{{ clickhouse_dbs_default + clickhouse_dbs_custom }}"
-
+# Logging:
 clickhouse_logger:
   level: trace
   log: "{{ clickhouse_path_logdir }}/clickhouse-server.log"
@@ -67,6 +53,7 @@ clickhouse_logger:
   size: 1000M
   count: 10
 
+# Connection tuning:
 clickhouse_config:
   max_connections: 2048
   keep_alive_timeout: 3
@@ -76,6 +63,3 @@ clickhouse_config:
   builtin_dictionaries_reload_interval: 3600
   max_session_timeout: 3600
   default_session_timeout: 60
-
-clickhouse_dicts: []
-

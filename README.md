@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/mediapeers/ansible-role-clickhouse.svg?branch=master)](https://travis-ci.com/mediapeers/ansible-role-clickhouse)
+
 # Ansible Clickhouse role
 
 Simple clickhouse-server deploy and management role.
@@ -6,20 +8,26 @@ This is a fork of https://github.com/AlexeySetevoi/ansible-clickhouse
 
 ## Role Variables
 
-F: You can manage listen ports
+Most variables have sane defaults. However you can overwrite them in `defaults/main.yml`.
+
+You can manage listen ports
+
 ```yaml
 clickhouse_http_port: 8123
 clickhouse_tcp_port: 9000
 clickhouse_interserver_http: 9009
 ```
-F: you can manage listen ip:
+
+you can manage listen ip:
+
 ```yaml
-clickhouse_listen_host_custom:
+clickhouse_listen_hosts:
   - "192.168.0.1"
 ```
-F: You can create custom profiles
+
+You can create custom profiles
 ```yaml
-clickhouse_profiles_custom:
+clickhouse_profiles:
  my_custom_profile:
    max_memory_usage: 10000000000
    use_uncompressed_cache: 0
@@ -27,34 +35,11 @@ clickhouse_profiles_custom:
    my_super_param: 9000
 ```
 
-Allow any plain k-v. Transform to xml
-```xml
-<profiles>
-    <!-- Profiles of settings. -->
-    <!-- Default profiles. -->
-        <default>
-            <max_memory_usage>10000000000</max_memory_usage>
-            <load_balancing>random</load_balancing>
-            <use_uncompressed_cache>0</use_uncompressed_cache>
-        </default>
-        <readonly>
-            <readonly>1</readonly>
-        </readonly>
-        <!-- Default profiles end. -->
-        <!-- Custom profiles. -->
-        <my_custom_profile>
-            <max_memory_usage>10000000000</max_memory_usage>
-            <load_balancing>random</load_balancing>
-            <use_uncompressed_cache>0</use_uncompressed_cache>
-            <my_super_param>9000</my_super_param>
-        </my_custom_profile>
-        <!-- Custom profiles end. -->
-</profiles>
-```
 
-F: You can create custom users:
+You can set-up users like this:
+
 ```yaml
-clickhouse_users_custom:
+clickhouse_users:
       - { name: "testuser",
           password_sha256_hex: "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
           networks: "{{ clickhouse_networks_default }}",
@@ -80,7 +65,7 @@ clickhouse_users_custom:
 
 F: You can manage own quotas:
 ```yaml
-clickhouse_quotas_custom:
+clickhouse_quotas:
  - { name: "my_custom_quota", intervals: "{{ clickhouse_quotas_intervals_default }}",comment: "Default quota - count only" }
 ```
 Quote object is simple dict:
@@ -91,7 +76,7 @@ Quote object is simple dict:
 F: You can create any databases:
 default db state - present
 ```yaml
-clickhouse_dbs_custom:
+clickhouse_dbs:
       - { name: testu1 }
       - { name: testu2 }
       - { name: testu3 }
@@ -132,11 +117,6 @@ clickhouse_dicts:
                 - { name: testAttrName, type: String, null_value: "" }
 ```
 
-F: Flag for remove clickhouse from host(disabled by default)
-```yaml
-clickhouse_remove: no
-```
-
 ## Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
@@ -144,7 +124,7 @@ Including an example of how to use your role (for instance, with variables passe
   - hosts: localhost
     remote_user: root
     vars:
-      clickhouse_users_custom:
+      clickhouse_users:
           - { name: "testuser",
               password_sha256_hex: "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
               networks: "{{ clickhouse_networks_default }}",
@@ -195,23 +175,13 @@ Including an example of how to use your role (for instance, with variables passe
                   - { name: testAttrComplexName, type: String }
               attributes:
                 - { name: testAttrName, type: String, null_value: "" }
-      clickhouse_dbs_custom:
+      clickhouse_dbs:
          - { name: testu1 }
          - { name: testu2, state:present }
          - { name: testu3, state:absent }
     roles:
       - ansible-clickhouse
 ```
-
-F: You can call separately stages(from playbook, external role etc.):
-
-Tag | Action
------------- | -------------
-install | Only installation of packages
-config_sys | Only configuration system configs(users.xml and config.xml)
-config_db | Only add&remove databases
-config_sys / Only regenerate dicts
-config | config_sys+config_db
 
 ## License
 
