@@ -59,18 +59,22 @@
   changed_when: False
   register: existing_databases
 
-- name: Config | Delete database config
+- name: Delete databases based on clickhouse_dbs directive
   command: "clickhouse-client -h localhost -q 'DROP DATABASE IF EXISTS `{{ item.name }}`'"
   with_items: "{{ clickhouse_dbs }}"
-  when: item.state is defined and item.state == 'absent' and item.name in existing_databases.stdout_lines
+  when:
+    - clickhouse_dbs is defined
+    - item.state is defined and item.state == 'absent' and item.name in existing_databases.stdout_lines
 
-- name: Config | Create database config
+- name: Create databases based on clickhouse_dbs directive
   command: "clickhouse-client -h localhost -q 'CREATE DATABASE IF NOT EXISTS `{{ item.name }}`'"
   with_items: "{{ clickhouse_dbs }}"
-  when: (item.state is undefined or item.state == 'present') and item.name not in existing_databases.stdout_lines
+  when:
+    - clickhouse_dbs is defined
+    - (item.state is undefined or item.state == 'present') and item.name not in existing_databases.stdout_lines
 
-- name: Config | Generate dictionary config
+- name: Generate dictionary config if clickhouse_dicts is defined
   template:
-   src: dicts.j2
-   dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
-
+    src: dicts.j2
+    dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
+  when: clickhouse_dicts is defined

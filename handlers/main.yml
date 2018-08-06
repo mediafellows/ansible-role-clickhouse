@@ -1,7 +1,7 @@
 ---
-# handlers file for clickhouse
-- name: restart-ch
+# handlers file for mediapeers.clickhouse role
+
+- name: restart clickhouse
   service:
     name: "clickhouse-server"
     state: restarted
-  become: true

@@ -2,7 +2,7 @@
 
 # Ansible Clickhouse role
 
-Simple clickhouse-server deploy and management role.
+Simple clickhouse-server deploy and management role. For ubuntu or debian server.
 
 This is a fork of https://github.com/AlexeySetevoi/ansible-clickhouse
 
