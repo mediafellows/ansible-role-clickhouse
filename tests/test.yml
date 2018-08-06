@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  remote_user: root
+  become: true
   vars:
     clickhouse_listen_host:
       - "127.0.0.1"
