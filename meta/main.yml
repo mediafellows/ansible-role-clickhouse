@@ -1,3 +1,5 @@
+---
+
 galaxy_info:
   author: Stefan Horning
   description: Role for installation and managing Yandex ClickHouse DB
