@@ -55,6 +55,8 @@
    group: clickhouse
   notify: restart clickhouse
 
+# Add DBs and dictionaries (optional)
+
 - name: Gather list of existing databases
   command: "clickhouse-client -h localhost -q 'show databases'"
   changed_when: False
