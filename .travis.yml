@@ -40,3 +40,7 @@ script:
 
   # Run serverspec
   - rake spec
+
+  # Output clickhouse-server config.xml
+  - echo 'Clickhouse server config.yml'
+  - cat /etc/clickhouse-server/config.xml

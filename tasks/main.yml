@@ -26,7 +26,7 @@
 # Configuration steps:
 # https://clickhouse.yandex/docs/en/operations/server_settings/settings/
 
-- name: Ensure clickhouse config,data and log dirs exist
+- name: Ensure clickhouse config, data and log dirs exist
   file:
     dest: "{{ item }}"
     owner: clickhouse
@@ -37,7 +37,6 @@
     - "{{ clickhouse_path_configdir }}"
     - "{{ clickhouse_path_tmp }}"
     - "{{ clickhouse_path_data }}"
-  notify: restart clickhouse
 
 - name: Add clickhouse config
   template:
@@ -45,7 +44,6 @@
    dest: "{{ clickhouse_path_configdir }}/config.xml"
    owner: clickhouse
    group: clickhouse
-  notify: restart clickhouse
 
 - name: Add clickhouse users config
   template:
@@ -53,9 +51,16 @@
    dest: "{{ clickhouse_path_configdir }}/users.xml"
    owner: clickhouse
    group: clickhouse
-  notify: restart clickhouse
 
-# Add DBs and dictionaries (optional)
+# Get service going:
+
+- name: Make sure clickhouse-server is (re)started and enabled on boot
+  service:
+    name: clickhouse-server
+    service: restarted
+    enabled: true
+
+  # Add DBs and dictionaries (optional preparation steps):
 
 - name: Gather list of existing databases
   command: "clickhouse-client -h localhost -q 'show databases'"
