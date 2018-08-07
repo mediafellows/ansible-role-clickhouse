@@ -2,8 +2,6 @@
 - hosts: localhost
   become: true
   vars:
-    clickhouse_listen_host:
-      - "127.0.0.1"
     clickhouse_path_data: /data/clickhouse/
     clickhouse_users:
       - { name: "default",

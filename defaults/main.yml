@@ -15,8 +15,12 @@ clickhouse_profiles:
  readonly:
    readonly: 1
 
-# Listen hosts:
+# Whitelisted network CIDRS:
 # clickhouse_networks_default is defined in vars/main.yml
+clickhouse_allowed_networks: "{{ clickhouse_networks_default }}"
+
+# Listen address(es):
+# Set this to 0.0.0.0 to listen on all IPv4 addresses and :: to listen on all IPv6 and IPv4 networks
 clickhouse_listen_hosts: "{{ clickhouse_networks_default }}"
 
 # Ports
@@ -26,8 +30,8 @@ clickhouse_interserver_http_port: 9009
 
 # Users and quotas:
 clickhouse_users:
-  - { name: "default", password: "", networks: "{{ clickhouse_listen_hosts }}", profile: "default", quota: "default", comment: "Default user for login if user not defined" }
-  - { name: "readonly", password: "", networks: "{{ clickhouse_listen_hosts }}", profile: "default", quota: "default", comment: "Example of user with readonly access" }
+  - { name: "default", password: "", networks: "{{ clickhouse_allowed_networks }}", profile: "default", quota: "default", comment: "Default user for login if user not defined" }
+  - { name: "readonly", password: "", networks: "{{ clickhouse_allowed_networks }}", profile: "default", quota: "default", comment: "Example of user with readonly access" }
 
 clickhouse_quotas_intervals_default:
  - { duration: 3600, queries: 0, errors: 0, result_rows: 0, read_rows: 0, execution_time: 0 }
