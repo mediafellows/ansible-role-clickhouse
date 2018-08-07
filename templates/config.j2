@@ -61,7 +61,7 @@
 
     <!-- Listen specified host. use :: (wildcard IPv6 address), if you want to accept connections both with IPv4 and IPv6 from everywhere. -->
     <!-- <listen_host>::</listen_host> -->
-    {% for host in clickhouse_listen_host %}
+    {% for host in clickhouse_listen_hosts %}
     <listen_host>{{ host }}</listen_host>
     {% endfor %}
 
