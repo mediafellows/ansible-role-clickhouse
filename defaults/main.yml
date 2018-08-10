@@ -40,6 +40,27 @@ clickhouse_quotas_intervals_default:
 clickhouse_quotas:
  - { name: "default", intervals: "{{ clickhouse_quotas_intervals_default }}", comment: "Default quota - count only" }
 
+# Zookeeper servers for clustering
+clickhouse_zookeeper_servers: []
+# Example list item:
+# - { id: 1, hostname: 'node1.zookeeper.internal', client_port: 2181 }
+
+# Remote clickhouse servers for data replication. Configs will can used in distributed tables.
+clickhouse_cluster_configs: []
+# Example list item:
+#  - name: cluster_1
+#    shards:
+#      - replicas:
+#        - { hostname: 'node01.clickhouse.servers', tcp_port: 9000 }
+#        - { hostname: 'node02.clickhouse.servers', tcp_port: 9000 }
+#      - replicas:
+#        - { hostname: 'node11.clickhouse.servers', tcp_port: 9000 }
+#        - { hostname: 'node12.clickhouse.servers', tcp_port: 9000 }
+
+# Macro settings for clustering
+clickhouse_shard_id: '01'
+clickhouse_replica_id: '01'
+
 # To add dbs and dicts during setup set those variables to lists:
 # clickhouse_dbs: []
 # clickhouse_dicts: []

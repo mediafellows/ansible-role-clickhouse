@@ -126,7 +126,22 @@
     <!-- Configuration of clusters that could be used in Distributed tables.
          https://clickhouse.yandex/reference_en.html#Distributed
       -->
-    <remote_servers incl="clickhouse_remote_servers" />
+    <remote_servers incl="clickhouse_remote_servers">
+      {% for cluster in clickhouse_cluster_configs %}
+      <{{ cluster.name }}>
+        {% for shard in cluster.shards %}
+        <shard>
+          {% for replica in shard.replicas %}
+          <replica>
+            <host>{{ replica.hostname ]}</host>
+            <port>{{ replica.tcp_port }}</port>
+          </replica>
+          {% endfor %}
+        </shard>
+        {% endfor %}
+      </{{ cluster.name }}>
+      {% endfor %}
+    </remote_servers>
 
 
     <!-- If element has 'incl' attribute, then for it's value will be used corresponding substitution from another file.
@@ -139,14 +154,25 @@
 
          See https://clickhouse.yandex/reference_en.html#Data%20replication
       -->
-    <zookeeper incl="zookeeper-servers" optional="true" />
+
+    <zookeeper incl="zookeeper-servers" optional="true">
+      {% for server in clickhouse_zookeeper_servers %}
+      <node index="{{ server.id }}">
+        <host>{{ server.hostname }}</host>
+        <port>{{ server.client_port }}</port>
+      </node>
+      {% endfor %}
+    </zookeeper>
 
     <!-- Substitutions for parameters of replicated tables.
           Optional. If you don't use replicated tables, you could omit that.
 
          See https://clickhouse.yandex/reference_en.html#Creating%20replicated%20tables
       -->
-    <macros incl="macros" optional="true" />
+    <macros incl="macros" optional="true">
+      <shard>{{ clickhouse_shard_id }}<shard>
+      <replica>{{ clickhouse_replica_id }}</replica>
+    </macros>
 
 
     <!-- Reloading interval for embedded dictionaries, in seconds. Default: 3600. -->

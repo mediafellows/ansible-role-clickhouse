@@ -60,7 +60,7 @@
     state: restarted
     enabled: true
 
-  # Add DBs and dictionaries (optional preparation steps):
+# Add DBs and dictionaries (optional preparation steps):
 
 - name: Gather list of existing databases
   command: "clickhouse-client -h localhost -q 'show databases'"
