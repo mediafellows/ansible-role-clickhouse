@@ -42,7 +42,9 @@ clickhouse_quotas:
 
 # To add dbs and dicts during setup set those variables to lists:
 # clickhouse_dbs: []
-# clickhouse_dicts: []
+# clickhouse_dicts: {}
+# OR
+# clickhouse_dict_file: path/to/file.xml.j2
 
 # Logging:
 clickhouse_logger:

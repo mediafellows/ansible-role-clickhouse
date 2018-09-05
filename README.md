@@ -117,6 +117,8 @@ clickhouse_dicts:
                 - { name: testAttrName, type: String, null_value: "" }
 ```
 
+Alternatively you can also provide your own file containing dicts using the `clickhouse_dict_file: path/to/file.xml` paremeter.
+
 ## Example Playbook
 
 Example playbook setting up Clickhouse server with a custom data dir and to be accessible in a IPv4 network. Relying on the default setting for the rest.

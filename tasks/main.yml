@@ -80,8 +80,16 @@
     - clickhouse_dbs is defined
     - (item.state is undefined or item.state == 'present') and item.name not in existing_databases.stdout_lines
 
+- name: Add dictionary config from given file if provided
+  template:
+    src: "{{ clickhouse_dict_file }}"
+    dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
+  when: clickhouse_dict_file is defined
+
 - name: Generate dictionary config if clickhouse_dicts is defined
   template:
     src: dicts.j2
     dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
-  when: clickhouse_dicts is defined
+  when:
+    - clickhouse_dicts is defined
+    - clickhouse_dict_file is undefined
