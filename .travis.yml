@@ -31,10 +31,10 @@ script:
   - ansible-playbook -i $INVENTORY --connection=local $TEST_PLAY
 
   # Run the role/playbook again, checking to make sure it's idempotent.
-  # Allow 3 changes in test play.
+  # Allow 4 changes in test play.
   - >
     ansible-playbook -i $INVENTORY --connection=local $TEST_PLAY
-    | grep -q 'changed=3.*failed=0'
+    | grep -q 'changed=4.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
