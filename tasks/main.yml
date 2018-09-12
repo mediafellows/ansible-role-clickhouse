@@ -40,27 +40,36 @@
 
 - name: Add clickhouse config
   template:
-   src: config.j2
-   dest: "{{ clickhouse_path_configdir }}/config.xml"
-   owner: clickhouse
-   group: clickhouse
+    src: config.j2
+    dest: "{{ clickhouse_path_configdir }}/config.xml"
+    owner: clickhouse
+    group: clickhouse
+  notify:
+    - restart clickhouse
 
 - name: Add clickhouse users config
   template:
-   src: users.j2
-   dest: "{{ clickhouse_path_configdir }}/users.xml"
-   owner: clickhouse
-   group: clickhouse
+    src: users.j2
+    dest: "{{ clickhouse_path_configdir }}/users.xml"
+    owner: clickhouse
+    group: clickhouse
+  notify:
+    - restart clickhouse
 
 # Get service going:
 
-- name: Make sure clickhouse-server is (re)started and enabled on boot
+- name: Make sure clickhouse-server is started and enabled on boot
   service:
     name: clickhouse-server
-    state: restarted
+    state: started
     enabled: true
+  notify:
+    - wait for start
 
-  # Add DBs and dictionaries (optional preparation steps):
+- name: Force all notified handlers to execute before continuing to use DB server
+  meta: flush_handlers
+
+# Add DBs and dictionaries (optional preparation steps):
 
 - name: Gather list of existing databases
   command: "clickhouse-client -h localhost -q 'show databases'"

@@ -5,3 +5,10 @@
   service:
     name: "clickhouse-server"
     state: restarted
+
+# Wait for server to be started first (also listens on restart task)
+
+- name: wait for start
+  listen: restart clickhouse
+  pause:
+    seconds: 2
