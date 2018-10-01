@@ -15,13 +15,23 @@
     repo: 'deb http://repo.yandex.ru/clickhouse/deb/stable/ main/'
     state: present
 
-- name: Install Clickhouse apt packages
+- name: Install Clickhouse apt packages in specific version (if provided)
+  apt:
+    name: "{{ item }}={{ clickhouse_package_version }}"
+    state: present
+  with_items:
+    - clickhouse-client
+    - clickhouse-server
+  when: clickhouse_package_version is defined
+
+- name: Install latest Clickhouse apt packages (unless speicific version is provided)
   apt:
     name: "{{ item }}"
     state: latest
   with_items:
     - clickhouse-client
     - clickhouse-server
+  when: clickhouse_package_version is undefined
 
 # Configuration steps:
 # https://clickhouse.yandex/docs/en/operations/server_settings/settings/
