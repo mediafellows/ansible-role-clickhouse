@@ -8,12 +8,13 @@ clickhouse_path_tmp:    /var/lib/clickhouse/tmp/
 
 # Profiles
 clickhouse_profiles:
- default:
-   max_memory_usage: 10000000000
-   use_uncompressed_cache: 0
-   load_balancing: random
- readonly:
-   readonly: 1
+  default:
+    max_memory_usage: 10000000000
+    use_uncompressed_cache: 0
+    load_balancing: random
+    enable_optimize_predicate_expression: 0
+  readonly:
+    readonly: 1
 
 # Whitelisted network CIDRS:
 # clickhouse_networks_default is defined in vars/main.yml
