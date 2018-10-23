@@ -20,6 +20,7 @@
     name: "{{ item }}={{ clickhouse_package_version }}"
     state: present
   with_items:
+    - clickhouse-common-static
     - clickhouse-client
     - clickhouse-server
   when: clickhouse_package_version is defined
