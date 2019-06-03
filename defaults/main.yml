@@ -41,19 +41,17 @@ clickhouse_quotas_intervals_default:
 clickhouse_quotas:
  - { name: "default", intervals: "{{ clickhouse_quotas_intervals_default }}", comment: "Default quota - count only" }
 
-# To add dbs and dicts during setup set those variables to lists:
+# To add DBs during setup set this variable to a list:
 # clickhouse_dbs: []
+
+# To setup dictionaries during setup define this dict variable
 # clickhouse_dicts: {}
-# OR
+# OR point to a file
 # clickhouse_dict_file: path/to/file.xml.j2
 
 # Logging:
-clickhouse_logger:
-  level: trace
-  log: "{{ clickhouse_path_logdir }}/clickhouse-server.log"
-  errorlog: "{{ clickhouse_path_logdir }}/clickhouse-server.err.log"
-  size: 1000M
-  count: 10
+clickhouse_log_level: trace
+clickhouse_log_file_size: 500M
 
 # Connection tuning:
 clickhouse_config:
