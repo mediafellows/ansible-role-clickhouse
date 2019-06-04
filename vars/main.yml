@@ -6,3 +6,10 @@ clickhouse_path_configdir: /etc/clickhouse-server
 clickhouse_networks_default:
   - "::1"
   - "127.0.0.1"
+
+clickhouse_logger:
+  level: "{{ clickhouse_log_level }}"
+  log: "{{ clickhouse_path_logdir }}/clickhouse-server.log"
+  errorlog: "{{ clickhouse_path_logdir }}/clickhouse-server.err.log"
+  size: "{{ clickhouse_log_file_size }}"
+  count: 10
