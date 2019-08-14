@@ -24,6 +24,8 @@
     - clickhouse-client
     - clickhouse-server
   when: clickhouse_package_version is defined
+  notify:
+    - restart clickhouse
 
 - name: Install latest Clickhouse apt packages (unless speicific version is provided)
   apt:
@@ -33,6 +35,8 @@
     - clickhouse-client
     - clickhouse-server
   when: clickhouse_package_version is undefined
+  notify:
+    - restart clickhouse
 
 # Configuration steps:
 # https://clickhouse.yandex/docs/en/operations/server_settings/settings/
@@ -114,3 +118,7 @@
   when:
     - clickhouse_dbs is defined
     - (item.state is undefined or item.state == 'present') and item.name not in existing_databases.stdout_lines
+
+- name: Run handlers
+  meta: flush_handlers
+
