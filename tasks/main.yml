@@ -17,23 +17,21 @@
 
 - name: Install Clickhouse apt packages in specific version (if provided)
   apt:
-    name: "{{ item }}={{ clickhouse_package_version }}"
+    name:
+      - "clickhouse-common-static={{ clickhouse_package_version }}"
+      - "clickhouse-client={{ clickhouse_package_version }}"
+      - "clickhouse-server={{ clickhouse_package_version }}"
     state: present
-  with_items:
-    - clickhouse-common-static
-    - clickhouse-client
-    - clickhouse-server
   when: clickhouse_package_version is defined
   notify:
     - restart clickhouse
 
 - name: Install latest Clickhouse apt packages (unless speicific version is provided)
   apt:
-    name: "{{ item }}"
+    name:
+      - clickhouse-client
+      - clickhouse-server
     state: latest
-  with_items:
-    - clickhouse-client
-    - clickhouse-server
   when: clickhouse_package_version is undefined
   notify:
     - restart clickhouse
