@@ -31,7 +31,7 @@
     name:
       - clickhouse-client
       - clickhouse-server
-    state: latest
+    state: present
   when: clickhouse_package_version is undefined
   notify:
     - restart clickhouse
@@ -119,4 +119,3 @@
 
 - name: Run handlers
   meta: flush_handlers
-

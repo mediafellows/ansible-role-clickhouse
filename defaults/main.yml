@@ -37,10 +37,10 @@ clickhouse_users:
   - { name: "readonly", password: "", networks: "{{ clickhouse_allowed_networks }}", profile: "default", quota: "default", comment: "Example of user with readonly access" }
 
 clickhouse_quotas_intervals_default:
- - { duration: 3600, queries: 0, errors: 0, result_rows: 0, read_rows: 0, execution_time: 0 }
+  - { duration: 3600, queries: 0, errors: 0, result_rows: 0, read_rows: 0, execution_time: 0 }
 
 clickhouse_quotas:
- - { name: "default", intervals: "{{ clickhouse_quotas_intervals_default }}", comment: "Default quota - count only" }
+  - { name: "default", intervals: "{{ clickhouse_quotas_intervals_default }}", comment: "Default quota - count only" }
 
 # To add DBs during setup set this variable to a list:
 # clickhouse_dbs: []
