@@ -46,3 +46,6 @@ script:
 
   # Output clickhouse-server user.xml
   - cat /etc/clickhouse-server/users.xml
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
