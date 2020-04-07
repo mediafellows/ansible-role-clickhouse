@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/mediapeers/ansible-role-clickhouse.svg?branch=master)](https://travis-ci.com/mediapeers/ansible-role-clickhouse)
+[![Build Status](https://travis-ci.com/mediafellows/ansible-role-clickhouse.svg?branch=master)](https://travis-ci.com/mediafellows/ansible-role-clickhouse)
 
 # Ansible Clickhouse role
 

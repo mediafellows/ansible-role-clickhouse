@@ -1,5 +1,5 @@
 ---
-# tasks file for mediapeers.clickhouse role
+# tasks file for mediafellows.clickhouse role
 
 # Ubuntu/Debian Installation steps:
 # https://clickhouse.yandex/docs/en/getting_started/index.html#installation

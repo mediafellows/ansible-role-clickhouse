@@ -1,5 +1,5 @@
 ---
-# defaults file for mediapeers.clickhouse role
+# defaults file for mediafellows.clickhouse role
 
 # Path settings:
 clickhouse_path_logdir: /var/log/clickhouse-server

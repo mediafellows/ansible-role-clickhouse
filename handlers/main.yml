@@ -1,5 +1,5 @@
 ---
-# handlers file for mediapeers.clickhouse role
+# handlers file for mediafellows.clickhouse role
 
 - name: restart clickhouse
   service:

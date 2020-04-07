@@ -1,5 +1,5 @@
 ---
-# vars file for mediapeers.clickhouse role
+# vars file for mediafellows.clickhouse role
 
 clickhouse_path_configdir: /etc/clickhouse-server
 
