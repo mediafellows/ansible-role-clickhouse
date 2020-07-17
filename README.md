@@ -134,7 +134,7 @@ Example playbook setting up Clickhouse server with a custom data dir and to be a
       clickouse_listen_hosts:
         - 0.0.0.0
     roles:
-      - ansible-clickhouse
+      - mediafellows.clickhouse
 ```
 
 ## License
