@@ -94,8 +94,12 @@
     name: clickhouse-server
     state: started
     enabled: true
-  notify:
-    - wait for start
+  register: start_task
+
+- name: Wait for start if service was just started
+  pause:
+    seconds: 4
+  when: start_task.changed
 
 # Add DBs and dictionaries (optional preparation steps):
 
