@@ -98,7 +98,7 @@
 
 - name: Wait for start if service was just started
   pause:
-    seconds: 4
+    seconds: 6
   when: start_task.changed
 
 # Add DBs and dictionaries (optional preparation steps):
