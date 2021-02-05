@@ -30,21 +30,20 @@ jobs:
       - name: Basic Ansible role syntax check
         run: ansible-playbook -i tests/inventory --syntax-check tests/test.yml
 
-      # TODO: remove echo
       - name: Real Ansible run
-        run: ansible-playbook -i tests/inventory tests/test.yml || echo 'Failed'
+        run: ansible-playbook -i tests/inventory tests/test.yml
 
-#      - name: Second run to check for indempotence (allowing 4 changes)
-#        run: "ansible-playbook -i tests/inventory tests/test.yml | grep -q 'changed=4.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)"
+      - name: Second run to check for indempotence (allowing 4 changes)
+        run: "ansible-playbook -i tests/inventory tests/test.yml | grep -q 'changed=4.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)"
 
-      - name: Output clickhouse-server config.xml
+      - name: DEBUG Output clickhouse-server config.xml
         run: sudo cat /etc/clickhouse-server/config.xml
 
-      - name: Output clickhouse-server user.xml
+      - name: DEBUG Output clickhouse-server user.xml
         run: sudo cat /etc/clickhouse-server/users.xml
 
-      - name: DEBUG
-        run: clickhouse-client -h 127.0.0.1 -q 'show databases'
+      - name: DEBUG Output all open network ports on CI runner
+        run: sudo netstat -tulpn
 
       - name: Setup serverspec (install gem)
         run: sudo gem install serverspec

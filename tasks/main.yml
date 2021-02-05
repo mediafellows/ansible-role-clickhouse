@@ -98,24 +98,27 @@
 
 - name: Wait for start if service was just started
   pause:
-    seconds: 4
+    seconds: 2
   when: start_task.changed
 
 # Add DBs and dictionaries (optional preparation steps):
 
 - name: Gather list of existing databases
-  command: "clickhouse-client -h localhost -q 'show databases'"
+  shell:
+    cmd: "clickhouse-client -h 127.0.0.1 -q 'show databases'"
   register: existing_databases
 
 - name: Delete databases based on clickhouse_dbs directive
-  command: "clickhouse-client -h localhost -q 'DROP DATABASE IF EXISTS `{{ item.name }}`'"
+  shell:
+    cmd: "clickhouse-client -h 127.0.0.1 -q 'DROP DATABASE IF EXISTS `{{ item.name }}`'"
   with_items: "{{ clickhouse_dbs }}"
   when:
     - clickhouse_dbs is defined
     - item.state is defined and item.state == 'absent' and item.name in existing_databases.stdout_lines
 
 - name: Create databases based on clickhouse_dbs directive
-  command: "clickhouse-client -h localhost -q 'CREATE DATABASE IF NOT EXISTS `{{ item.name }}`'"
+  shell:
+    cmd: "clickhouse-client -h 127.0.0.1 -q 'CREATE DATABASE IF NOT EXISTS `{{ item.name }}`'"
   with_items: "{{ clickhouse_dbs }}"
   when:
     - clickhouse_dbs is defined
