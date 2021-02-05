@@ -12,4 +12,21 @@ describe "Clickhouse Setup" do
   describe file('/etc/clickhouse-server/users.xml') do
     its(:content) { should include("<users>") }
   end
+
+  describe port(9000) do
+    it { should be_listening }
+  end
+
+  describe port(9009) do
+    it { should be_listening }
+  end
+
+  describe port(8123) do
+    it { should be_listening }
+  end
+
+  describe command("clickhouse-client -h 127.0.0.1 -q 'show databases'") do
+    its(:exit_status) { should eq 0 }
+    its(:stdout) { should match /default/ }
+  end
 end
