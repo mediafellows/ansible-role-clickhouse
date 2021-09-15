@@ -2,7 +2,7 @@
 # handlers file for mediafellows.clickhouse role
 
 - name: restart clickhouse
-  service:
+  ansible.builtin.service:
     name: "clickhouse-server"
     state: restarted
 
@@ -10,5 +10,5 @@
 
 #- name: wait for start
 #  listen: restart clickhouse
-#  pause:
+#  ansible.builtin.pause:
 #    seconds: 2

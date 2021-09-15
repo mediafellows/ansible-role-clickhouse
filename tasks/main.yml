@@ -5,18 +5,18 @@
 # https://clickhouse.yandex/docs/en/getting_started/index.html#installation
 
 - name: Add clickhouse apt repo key
-  apt_key:
+  ansible.builtin.apt_key:
     keyserver: keyserver.ubuntu.com
     id: E0C56BD4
     state: present
 
 - name: Install clihouse apt repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: 'deb http://repo.yandex.ru/clickhouse/deb/stable/ main/'
     state: present
 
 - name: Install Clickhouse apt packages in specific version (if provided)
-  apt:
+  ansible.builtin.apt:
     name:
       - "clickhouse-common-static={{ clickhouse_package_version }}"
       - "clickhouse-client={{ clickhouse_package_version }}"
@@ -27,7 +27,7 @@
     - restart clickhouse
 
 - name: Install latest Clickhouse apt packages (unless speicific version is provided)
-  apt:
+  ansible.builtin.apt:
     name:
       - clickhouse-client
       - clickhouse-server
@@ -40,7 +40,7 @@
 # https://clickhouse.yandex/docs/en/operations/server_settings/settings/
 
 - name: Ensure clickhouse config, data and log dirs exist
-  file:
+  ansible.builtin.file:
     dest: "{{ item }}"
     owner: clickhouse
     group: clickhouse
@@ -52,7 +52,7 @@
     - "{{ clickhouse_path_data }}"
 
 - name: Add clickhouse config
-  template:
+  ansible.builtin.template:
     src: config.j2
     dest: "{{ clickhouse_path_configdir }}/config.xml"
     owner: clickhouse
@@ -61,7 +61,7 @@
     - restart clickhouse
 
 - name: Add clickhouse users config
-  template:
+  ansible.builtin.template:
     src: users.j2
     dest: "{{ clickhouse_path_configdir }}/users.xml"
     owner: clickhouse
@@ -70,7 +70,7 @@
     - restart clickhouse
 
 - name: Add dictionary config from given file if provided
-  template:
+  ansible.builtin.template:
     src: "{{ clickhouse_dict_file }}"
     dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
   when: clickhouse_dict_file is defined
@@ -78,7 +78,7 @@
     - restart clickhouse
 
 - name: Generate dictionary config if clickhouse_dicts is defined
-  template:
+  ansible.builtin.template:
     src: dicts.j2
     dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
   when:
@@ -90,7 +90,7 @@
 # Get service going:
 
 - name: Make sure clickhouse-server is started and enabled on boot
-  service:
+  ansible.builtin.service:
     name: clickhouse-server
     state: started
     enabled: true
@@ -104,12 +104,12 @@
 # Add DBs and dictionaries (optional preparation steps):
 
 - name: Gather list of existing databases
-  shell:
+  ansible.builtin.shell:
     cmd: "clickhouse-client -h 127.0.0.1 -q 'show databases'"
   register: existing_databases
 
 - name: Delete databases based on clickhouse_dbs directive
-  shell:
+  ansible.builtin.shell:
     cmd: "clickhouse-client -h 127.0.0.1 -q 'DROP DATABASE IF EXISTS `{{ item.name }}`'"
   with_items: "{{ clickhouse_dbs }}"
   when:
@@ -117,7 +117,7 @@
     - item.state is defined and item.state == 'absent' and item.name in existing_databases.stdout_lines
 
 - name: Create databases based on clickhouse_dbs directive
-  shell:
+  ansible.builtin.shell:
     cmd: "clickhouse-client -h 127.0.0.1 -q 'CREATE DATABASE IF NOT EXISTS `{{ item.name }}`'"
   with_items: "{{ clickhouse_dbs }}"
   when:
@@ -125,4 +125,5 @@
     - (item.state is undefined or item.state == 'present') and item.name not in existing_databases.stdout_lines
 
 - name: Run handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
+
