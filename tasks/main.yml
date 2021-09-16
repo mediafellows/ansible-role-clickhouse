@@ -97,7 +97,7 @@
   register: start_task
 
 - name: Wait for start if service was just started
-  pause:
+  ansible.builtin.pause:
     seconds: 2
   when: start_task.changed
 
