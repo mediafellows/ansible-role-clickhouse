@@ -110,8 +110,16 @@
 
 - name: Wait for start if service was just started
   ansible.builtin.pause:
-    seconds: 2
+    seconds: 5
   when: start_task.changed
+
+- name: Display users.xml contents
+  command: cat users.xml  chdir=/etc/clickhouse-server/users.d
+  register: command_output
+
+- name: Print to console
+  debug:
+    msg: "{{command_output.stdout}}"
 
 # Add DBs and dictionaries (optional preparation steps):
 
