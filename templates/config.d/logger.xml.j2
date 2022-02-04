@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- {{ ansible_managed }} -->
+<clickhouse>
+  <logger>
+    <level>{{ clickhouse_logger.level }}</level>
+    <log>{{ clickhouse_logger.log }}</log>
+    <errorlog>{{ clickhouse_logger.errorlog }}</errorlog>
+    <size>{{ clickhouse_logger.size }}</size>
+    <count>{{ clickhouse_logger.count }}</count>
+  </logger>
+</clickhouse>

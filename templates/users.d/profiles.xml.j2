@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- {{ ansible_managed }} -->
+<yandex>
+  <profiles>
+    <!-- Profiles of settings. -->
+    {% for dict_item in clickhouse_profiles %}
+    <{{ dict_item }}>
+    {% for item in clickhouse_profiles[dict_item] %}
+        <{{ item }}>{{ clickhouse_profiles[dict_item][item] }}</{{ item }}>
+    {% endfor %}
+    </{{ dict_item }}>
+    {% endfor %}
+  </profiles>
+</yandex>

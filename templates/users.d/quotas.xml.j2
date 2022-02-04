@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!-- {{ ansible_managed }} -->
+<yandex>
+  <quotas>
+    {% for quota in clickhouse_quotas %}
+    <{{ quota.name }}>
+    {% for interval in quota.intervals %}
+        <duration>{{ interval.duration }}</duration>
+        <queries>{{ interval.queries }}</queries>
+        <errors>{{ interval.errors }}</errors>
+        <result_rows>{{ interval.result_rows }}</result_rows>
+        <read_rows>{{ interval.read_rows }}</read_rows>
+        <execution_time>{{ interval.execution_time }}</execution_time>
+    {% endfor %}
+    </{{ quota.name }}>
+    {% endfor %}
+  </quotas>
+</yandex>
