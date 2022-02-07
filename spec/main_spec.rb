@@ -5,7 +5,7 @@ describe "Clickhouse Setup" do
     it { should be_installed }
   end
 
-  describe file('/etc/clickhouse-server/config.d/data-paths.xml') do
+  describe file('/etc/clickhouse-server/config.d/dirs.xml') do
     its(:content) { should include("<path>#{ANSIBLE_VARS.fetch('clickhouse_path_data', 'FAIL')}</path>") }
   end
 
