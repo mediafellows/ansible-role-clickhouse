@@ -11,6 +11,7 @@ clickhouse_path_data: /var/lib/clickhouse/
 clickhouse_path_tmp: /var/lib/clickhouse/tmp/
 clickhouse_path_user_files: /var/lib/clickhouse/user_files
 clickhouse_path_format_schema: /var/lib/clickhouse/format_schemas
+clickhouse_path_configdir: /etc/clickhouse-server
 
 # Profiles
 clickhouse_profiles:
