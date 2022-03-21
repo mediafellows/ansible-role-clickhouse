@@ -4,29 +4,6 @@
 # Ubuntu/Debian Installation steps:
 # https://clickhouse.yandex/docs/en/getting_started/index.html#installation
 
-- name: Create /data for a DB mountpoint
-  ansible.builtin.file:
-    path: "{{ clickhouse_data_disk_mountpoint }}"
-    state: directory
-    mode: 0755
-    owner: root
-  register: dir_creation
-  when: clickhouse_data_disk_mountpoint is defined
-
-- name: Format data disk as ext4 for the install process
-  ansible.builtin.shell:
-    cmd: 'mkfs -t ext4 {{ clickhouse_data_disk }}'
-  when: clickhouse_data_disk is defined and dir_creation.changed
-
-- name: Ensure instance storage gets mounted in the right place (/data)
-  mount:
-    name: "{{ clickhouse_data_disk_mountpoint }}"
-    src: "{{ clickhouse_data_disk }}"
-    fstype: ext4
-    opts: defaults,noatime
-    state: mounted
-  when: clickhouse_data_disk is defined and clickhouse_data_disk_mountpoint is defined
-
 - name: Add clickhouse apt repo key
   ansible.builtin.apt_key:
     keyserver: keyserver.ubuntu.com
