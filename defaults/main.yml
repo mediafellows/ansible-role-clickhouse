@@ -52,6 +52,8 @@ clickhouse_quotas:
 # To add DBs during setup set this variable to a list:
 # clickhouse_dbs: []
 
+# List for remote_url_allow_hosts clickhouse directive.
+# List of hosts allowed to use in URL-related storage engines and table functions.
 clickhouse_allowed_remote_hosts: []
 
 # Logging:
