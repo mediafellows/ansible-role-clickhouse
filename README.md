@@ -8,7 +8,8 @@ This is a fork of https://github.com/AlexeySetevoi/ansible-clickhouse
 
 ## Role Variables
 
-Most variables have sane defaults. However you can overwrite them in `defaults/main.yml`.
+Most variables have sane defaults, but you can of course overwrite them in your play.
+See `defaults/main.yml` for an overwiev of all vars.
 
 You can manage listen ports
 
@@ -83,41 +84,6 @@ clickhouse_dbs:
       - { name: testu4, state: absent }
       - { name: testu4, state: present }
 ```
-
-You can create dictionary via odbc
-```
-clickhouse_dicts:
-          test1:
-            name: test_dict
-            odbc_source:
-              connection_string: "DSN=testdb"
-              source_table: "dict_source"
-            lifetime:
-              min: 300
-              max: 360
-            layout: hashed
-            structure:
-              key: "testIntKey"
-              attributes:
-                - { name: testAttrName, type: UInt32, null_value: 0 }
-          test2:
-            name: test_dict
-            odbc_source:
-              connection_string: "DSN=testdb"
-              source_table: "dict_source"
-            lifetime:
-              min: 300
-              max: 360
-            layout: complex_key_hashed
-            structure:
-              key:
-                attributes:
-                  - { name: testAttrComplexName, type: String }
-              attributes:
-                - { name: testAttrName, type: String, null_value: "" }
-```
-
-Alternatively you can also provide your own file containing dicts using the `clickhouse_dict_file: path/to/file.xml` paremeter.
 
 ## Example Playbook
 

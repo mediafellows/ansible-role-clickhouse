@@ -52,11 +52,6 @@ clickhouse_quotas:
 # To add DBs during setup set this variable to a list:
 # clickhouse_dbs: []
 
-# To setup dictionaries during setup define this dict variable
-# clickhouse_dicts: {}
-# OR point to a file
-# clickhouse_dict_file: path/to/file.xml.j2
-
 clickhouse_allowed_remote_hosts: []
 
 # Logging:

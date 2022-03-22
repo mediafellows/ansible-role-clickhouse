@@ -90,13 +90,15 @@
     seconds: 5
   when: start_task.changed
 
-- name: Display users.xml contents
-  command: cat users.xml  chdir=/etc/clickhouse-server/users.d
+- name: Get users.xml contents
+  command:
+    cmd: 'cat users.xml'
+    chdir: /etc/clickhouse-server/users.d
   register: command_output
 
-- name: Print to console
+- name: Output users.xml contents
   debug:
-    msg: "{{command_output.stdout}}"
+    var: command_output.stdout
 
 # Add DBs and dictionaries (optional preparation steps):
 
