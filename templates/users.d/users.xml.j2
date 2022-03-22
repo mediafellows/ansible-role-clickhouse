@@ -1,24 +1,15 @@
 <?xml version="1.0"?>
 <!-- {{ ansible_managed }} -->
 <yandex>
-   <profiles>
-    <!-- Profiles of settings. -->
-    {% for dict_item in clickhouse_profiles %}
-    <{{ dict_item }}>
-    {% for item in clickhouse_profiles[dict_item] %}
-        <{{ item }}>{{ clickhouse_profiles[dict_item][item] }}</{{ item }}>
-    {% endfor %}
-    </{{ dict_item }}>
-    {% endfor %}
-    </profiles>
-
-    <!-- Users and ACL. -->
-    <users>
+  <users>
     {% for user in clickhouse_users %}
     {% if user.comment is defined %}
     <!-- {{user.comment}} -->
     {% endif %}
     <{{ user.name }}>
+        {% if user.password_remove is defined %}
+    	<password remove='1' />
+	{% endif %}
         {% if user.password is defined and user.password_sha256_hex is not defined %}
         <password>{{ user.password }}</password>
         {% elif user.password is not defined and user.password_sha256_hex is defined %}
@@ -42,21 +33,5 @@
         {% endif %}
     </{{ user.name }}>
     {% endfor %}
-    </users>
-
-    <!-- Quotas. -->
-    <quotas>
-    {% for quota in clickhouse_quotas %}
-    <{{ quota.name }}>
-    {% for interval in quota.intervals %}
-        <duration>{{ interval.duration }}</duration>
-        <queries>{{ interval.queries }}</queries>
-        <errors>{{ interval.errors }}</errors>
-        <result_rows>{{ interval.result_rows }}</result_rows>
-        <read_rows>{{ interval.read_rows }}</read_rows>
-        <execution_time>{{ interval.execution_time }}</execution_time>
-    {% endfor %}
-    </{{ quota.name }}>
-    {% endfor %}
-    </quotas>
+  </users>
 </yandex>

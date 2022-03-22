@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- {{ ansible_managed }} -->
+<clickhouse>
+  <remote_url_allow_hosts>
+  {% for host in clickhouse_allowed_remote_hosts %}
+    <host>{{ host }}</host>
+  {% endfor %}
+  </remote_url_allow_hosts>
+</clickhouse>

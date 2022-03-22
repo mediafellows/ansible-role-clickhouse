@@ -51,43 +51,32 @@
     - "{{ clickhouse_path_tmp }}"
     - "{{ clickhouse_path_data }}"
 
-- name: Add clickhouse config
+- name: Add clickhouse config.d/ configs
   ansible.builtin.template:
-    src: config.j2
-    dest: "{{ clickhouse_path_configdir }}/config.xml"
+    src: "config.d/{{ item }}.j2"
+    dest: "{{ clickhouse_path_configdir }}/config.d/{{ item }}"
     owner: clickhouse
     group: clickhouse
+  with_items:
+    - logger.xml
+    - network.xml
+    - remote_hosts.xml
+    - dirs.xml
   notify:
     - restart clickhouse
 
-- name: Add clickhouse users config
+- name: Add clickhouse users.d/ configs
   ansible.builtin.template:
-    src: users.j2
-    dest: "{{ clickhouse_path_configdir }}/users.xml"
+    src: "users.d/{{ item }}.j2"
+    dest: "{{ clickhouse_path_configdir }}/users.d/{{ item }}"
     owner: clickhouse
     group: clickhouse
+  with_items:
+    - profiles.xml
+    - quotas.xml
+    - users.xml
   notify:
     - restart clickhouse
-
-- name: Add dictionary config from given file if provided
-  ansible.builtin.template:
-    src: "{{ clickhouse_dict_file }}"
-    dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
-  when: clickhouse_dict_file is defined
-  notify:
-    - restart clickhouse
-
-- name: Generate dictionary config if clickhouse_dicts is defined
-  ansible.builtin.template:
-    src: dicts.j2
-    dest: "{{ clickhouse_path_configdir }}/auto_dictionary.xml"
-  when:
-    - clickhouse_dicts is defined
-    - clickhouse_dict_file is undefined
-  notify:
-    - restart clickhouse
-
-# Get service going:
 
 - name: Make sure clickhouse-server is started and enabled on boot
   ansible.builtin.service:
@@ -98,19 +87,29 @@
 
 - name: Wait for start if service was just started
   ansible.builtin.pause:
-    seconds: 2
+    seconds: 5
   when: start_task.changed
+
+- name: Get users.xml contents
+  command:
+    cmd: 'cat users.xml'
+    chdir: /etc/clickhouse-server/users.d
+  register: command_output
+
+- name: Output users.xml contents
+  debug:
+    var: command_output.stdout
 
 # Add DBs and dictionaries (optional preparation steps):
 
 - name: Gather list of existing databases
   ansible.builtin.shell:
-    cmd: "clickhouse-client -h 127.0.0.1 -q 'show databases'"
+    cmd: "clickhouse-client -h 127.0.0.1 --user default --password '{{ clickhouse_client_password }}' -q 'show databases'"
   register: existing_databases
 
 - name: Delete databases based on clickhouse_dbs directive
   ansible.builtin.shell:
-    cmd: "clickhouse-client -h 127.0.0.1 -q 'DROP DATABASE IF EXISTS `{{ item.name }}`'"
+    cmd: "clickhouse-client -h 127.0.0.1 --user default --password '{{ clickhouse_client_password }}' -q 'DROP DATABASE IF EXISTS `{{ item.name }}`'"
   with_items: "{{ clickhouse_dbs }}"
   when:
     - clickhouse_dbs is defined
@@ -118,7 +117,7 @@
 
 - name: Create databases based on clickhouse_dbs directive
   ansible.builtin.shell:
-    cmd: "clickhouse-client -h 127.0.0.1 -q 'CREATE DATABASE IF NOT EXISTS `{{ item.name }}`'"
+    cmd: "clickhouse-client -h 127.0.0.1 --user default --password '{{ clickhouse_client_password }}' -q 'CREATE DATABASE IF NOT EXISTS `{{ item.name }}`'"
   with_items: "{{ clickhouse_dbs }}"
   when:
     - clickhouse_dbs is defined
@@ -126,4 +125,3 @@
 
 - name: Run handlers
   ansible.builtin.meta: flush_handlers
-

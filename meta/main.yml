@@ -2,7 +2,7 @@
 
 galaxy_info:
   role_name: clickhouse
-  author: Stefan Horning
+  author: Stefan Horning, Arturs Meinarts
   company: Mediafellows GmbH
   description: Role for installation and managing Yandex ClickHouse DB
   license: BSD
