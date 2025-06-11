@@ -2,21 +2,31 @@
 # tasks file for mediafellows.clickhouse role
 
 # Ubuntu/Debian Installation steps:
-# https://clickhouse.yandex/docs/en/getting_started/index.html#installation
+# https://clickhouse.com/docs/install/debian_ubuntu
 
-- name: Add clickhouse apt repo key
-  ansible.builtin.apt_key:
-    keyserver: keyserver.ubuntu.com
-    id: E0C56BD4
+- name: Ensure tooling for install is present
+  ansible.builtin.apt:
+    name:
+      - curl
+      - gnupg
+      - apt-transport-https
     state: present
 
-- name: Install clihouse apt repo
-  ansible.builtin.apt_repository:
-    repo: 'deb http://repo.yandex.ru/clickhouse/deb/stable/ main/'
-    state: present
+- name: Add Clickhouse apt signing key
+  ansible.builtin.shell:
+    cmd: curl -fsSL 'https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key' | sudo gpg --dearmor -o /usr/share/keyrings/clickhouse-keyring.gpg
+
+- name: Output architecture being used in apt config
+  ansible.builtin.debug:
+    var: ansible_architecture
+
+- name: Add Clickhouse apt repo config
+  ansible.builtin.shell:
+    cmd: echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg arch={{ansible_architecture}}] https://packages.clickhouse.com/deb stable main" | sudo tee /etc/apt/sources.list.d/clickhouse.list
 
 - name: Install Clickhouse apt packages in specific version (if provided)
   ansible.builtin.apt:
+    update_cache: true
     name:
       - "clickhouse-common-static={{ clickhouse_package_version }}"
       - "clickhouse-client={{ clickhouse_package_version }}"
@@ -28,6 +38,7 @@
 
 - name: Install latest Clickhouse apt packages (unless speicific version is provided)
   ansible.builtin.apt:
+    update_cache: true
     name:
       - clickhouse-client
       - clickhouse-server
