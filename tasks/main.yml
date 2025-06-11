@@ -14,15 +14,13 @@
 
 - name: Add Clickhouse apt signing key
   ansible.builtin.shell:
-    cmd: curl -fsSL 'https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key' | sudo gpg --dearmor -o /usr/share/keyrings/clickhouse-keyring.gpg
-
-- name: Output architecture being used in apt config
-  ansible.builtin.debug:
-    var: ansible_architecture
+    cmd: "curl -fsSL 'https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key' | sudo gpg --dearmor -o {{ clickhouse_apt_repo_key_location }}"
+    creates: '{{ clickhouse_apt_repo_key_location }}'
 
 - name: Add Clickhouse apt repo config
   ansible.builtin.shell:
-    cmd: echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg] https://packages.clickhouse.com/deb stable main" | sudo tee /etc/apt/sources.list.d/clickhouse.list
+    cmd: echo "deb [signed-by={{ clickhouse_apt_repo_key_location }}] https://packages.clickhouse.com/deb stable main" | sudo tee /etc/apt/sources.list.d/clickhouse.list
+    creates: /etc/apt/sources.list.d/clickhouse.list
 
 - name: Install Clickhouse apt packages in specific version (if provided)
   ansible.builtin.apt:
@@ -46,6 +44,15 @@
   when: clickhouse_package_version is undefined
   notify:
     - restart clickhouse
+
+- name: Get installed Clickhouse version (through DB query)
+  ansible.builtin.shell:
+    cmd: "clickhouse-client -h 127.0.0.1 --user default --password '{{ clickhouse_client_password }}' -q 'SELECT version()'"
+  register: clickhouse_installed_version
+
+- name: Output installed Clickhouse version
+  ansible.builtin.debug:
+    var: clickhouse_installed_version.stdout_lines
 
 # Configuration steps:
 # https://clickhouse.yandex/docs/en/operations/server_settings/settings/
