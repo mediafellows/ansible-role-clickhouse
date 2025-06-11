@@ -18,9 +18,9 @@
     creates: '{{ clickhouse_apt_repo_key_location }}'
 
 - name: Add Clickhouse apt repo config
-  ansible.builtin.shell:
-    cmd: echo "deb [signed-by={{ clickhouse_apt_repo_key_location }}] https://packages.clickhouse.com/deb stable main" | sudo tee /etc/apt/sources.list.d/clickhouse.list
-    creates: /etc/apt/sources.list.d/clickhouse.list
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by={{ clickhouse_apt_repo_key_location }}] https://packages.clickhouse.com/deb stable main"
+    state: present
 
 - name: Install Clickhouse apt packages in specific version (if provided)
   ansible.builtin.apt:
