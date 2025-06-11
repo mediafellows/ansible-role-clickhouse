@@ -16,6 +16,7 @@ clickhouse_profiles:
     use_uncompressed_cache: 0
     load_balancing: random
     enable_optimize_predicate_expression: 0
+    max_partitions_per_insert_block: 0
     async_insert: 1
   readonly:
     readonly: 1

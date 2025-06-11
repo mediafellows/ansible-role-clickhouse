@@ -22,7 +22,7 @@
 
 - name: Add Clickhouse apt repo config
   ansible.builtin.shell:
-    cmd: echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg arch={{ansible_architecture}}] https://packages.clickhouse.com/deb stable main" | sudo tee /etc/apt/sources.list.d/clickhouse.list
+    cmd: echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg] https://packages.clickhouse.com/deb stable main" | sudo tee /etc/apt/sources.list.d/clickhouse.list
 
 - name: Install Clickhouse apt packages in specific version (if provided)
   ansible.builtin.apt:
