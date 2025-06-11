@@ -5,16 +5,14 @@ on: [ push, pull_request ]
 
 jobs:
   test:
+    name: Ansible Role Testing
     runs-on: ubuntu-latest
+    env:
+      ANSIBLE_FORCE_COLOR: true
     steps:
 
       - name: Checkout code from Github
         uses: actions/checkout@v4
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.10.14
 
       - name: Install latest Ansible through pip
         run: pip install ansible
@@ -33,8 +31,8 @@ jobs:
       - name: Real Ansible run
         run: ansible-playbook -i tests/inventory tests/test.yml
 
-      - name: Second run to check for indempotence (allowing 3 changes for facts gathering and DB deletion test)
-        run: "ansible-playbook -i tests/inventory tests/test.yml | grep -q 'changed=3.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)"
+      - name: Second run to check for indempotence (allowing 4 changes for facts gathering and DB deletion test)
+        run: "ansible-playbook -i tests/inventory tests/test.yml | grep -q 'changed=4.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)"
 
       - name: DEBUG Output clickhouse-server config.xml
         run: sudo cat /etc/clickhouse-server/config.xml

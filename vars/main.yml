@@ -13,3 +13,5 @@ clickhouse_logger:
   errorlog: "{{ clickhouse_path_logdir }}/clickhouse-server.err.log"
   size: "{{ clickhouse_log_file_size }}"
   count: 10
+
+clickhouse_apt_repo_key_location: /usr/share/keyrings/clickhouse-keyring.gpg
