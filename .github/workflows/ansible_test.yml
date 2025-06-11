@@ -5,16 +5,14 @@ on: [ push, pull_request ]
 
 jobs:
   test:
+    name: Ansible Role Testing
     runs-on: ubuntu-latest
+    env:
+      ANSIBLE_FORCE_COLOR: true
     steps:
 
       - name: Checkout code from Github
         uses: actions/checkout@v4
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.10.14
 
       - name: Install latest Ansible through pip
         run: pip install ansible
