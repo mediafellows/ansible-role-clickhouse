@@ -45,15 +45,6 @@
   notify:
     - restart clickhouse
 
-- name: Get installed Clickhouse version (through DB query)
-  ansible.builtin.shell:
-    cmd: "clickhouse-client -h 127.0.0.1 --user default --password '{{ clickhouse_client_password }}' -q 'SELECT version()'"
-  register: clickhouse_installed_version
-
-- name: Output installed Clickhouse version
-  ansible.builtin.debug:
-    var: clickhouse_installed_version.stdout_lines
-
 # Configuration steps:
 # https://clickhouse.yandex/docs/en/operations/server_settings/settings/
 
@@ -109,6 +100,17 @@
   ansible.builtin.pause:
     seconds: 5
   when: start_task.changed
+
+# Info outputs:
+
+- name: Get installed Clickhouse version (through DB query)
+  ansible.builtin.shell:
+    cmd: "clickhouse-client -h 127.0.0.1 --user default --password '{{ clickhouse_client_password }}' -q 'SELECT version()'"
+  register: clickhouse_installed_version
+
+- name: Output installed Clickhouse version
+  ansible.builtin.debug:
+    var: clickhouse_installed_version.stdout_lines
 
 - name: Get users.xml contents
   command:
