@@ -8,8 +8,8 @@
     {% endif %}
     <{{ user.name }}>
         {% if user.password_remove is defined %}
-    	<password remove='1' />
-	{% endif %}
+        <password remove='1' />
+        {% endif %}
         {% if user.password is defined and user.password_sha256_hex is not defined %}
         <password>{{ user.password }}</password>
         {% elif user.password is not defined and user.password_sha256_hex is defined %}
@@ -19,7 +19,7 @@
         {% endif %}
         <networks incl="networks" replace="replace">
         {% for net in user.networks %}
-        <ip>{{ net }}</ip>
+          <ip>{{ net }}</ip>
         {% endfor %}
         </networks>
         <profile>{{ user.profile }}</profile>
